@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кейс-задача №3. Слайдер</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(to right, #e0eafc, #cfdef3);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .slider-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border: 3px solid #4e54c8;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .image-box {
+            width: 100%;
+            height: 450px;
+            border: 4px solid #667eea;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+            background: #f8f9fa;
+        }
+
+        .slide-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>🖼️Слайдер картинок</h1>
+    
+    <div class="slider-box">
+        <div class="image-box">
+            <div class="loading">Загрузка картинки...</div>
+            <img class="slide-img" id="slideImage" style="display: none;">
+        </div>
+        
+        <div class="buttons">
+            <button class="btn" id="prevBtn">⬅️ Назад</button>
+            <button class="btn" id="nextBtn">Вперед ➡️</button>
+        </div>
+        
+        <div class="counter" id="imageCounter">Картинка 1 из 5</div>
+    </div>
+
+    <script>
+        // Тут будут картинки
+        var pictures = [
+            'images/image1.jpg',
+            'images/image2.jpg', 
+            'images/image3.jpg',
+            'images/image4.png',
+            'images/image5.jpg'
+        ];
+
+        // Переменные, которые нам нужны
+        var nowPicture = 0;
+        var imgElement = document.getElementById('slideImage');
+        var counterText = document.getElementById('imageCounter');
+        var prevBtn = document.getElementById('prevBtn');
+        var nextBtn = document.getElementById('nextBtn');
+        var loadingDiv = document.querySelector('.loading');
+
+        // Функция, чтобы поменять картинку
+        function changePicture() {
+            // Показываем загрузку
+            loadingDiv.style.display = 'flex';
+            imgElement.style.display = 'none';
+            
+            // Ждем немного, чтобы картинка загрузилась
+            setTimeout(function() {
+                imgElement.src = pictures[nowPicture];
+                imgElement.onload = function() {
+                    loadingDiv.style.display = 'none';
+                    imgElement.style.display = 'block';
+                };
+                
+                // Обновляем счетчик
+                counterText.textContent = 'Картинка ' + (nowPicture + 1) + ' из ' + pictures.length;
+            }, 300);
+        }
+
+        // Функция для следующей картинки
+        function goNext() {
+            nowPicture = nowPicture + 1;
+            if (nowPicture >= pictures.length) {
+                nowPicture = 0; // Возвращаемся к первой картинке
+            }
+            changePicture();
+        }
+
+        // Функция для предыдущей картинки
+        function goBack() {
+            nowPicture = nowPicture - 1;
+            if (nowPicture < 0) {
+                nowPicture = pictures.length - 1; // Идем к последней картинке
+            }
+            changePicture();
+        }
+
+        // Когда нажимаем на кнопки
+        prevBtn.onclick = goBack;
+        nextBtn.onclick = goNext;
+
+        // Также можно клавишами стрелками управлять
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                goBack();
+            } else if (event.key === 'ArrowRight') {
+                goNext();
+            }
+        });
+
+        // Показываем первую картинку, когда страница загрузится
+        window.onload = function() {
+            changePicture();
+        };
+    </script>
+</body>
+</html>
